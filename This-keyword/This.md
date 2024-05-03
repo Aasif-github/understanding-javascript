@@ -197,7 +197,6 @@ A fourth way to call a function, and assign the this for that invocation, is wit
 
 ```js
 "use strict"
-"use strict";
 
 var point = {
     x: null,
@@ -274,3 +273,144 @@ These rules, in this order, are how JS determines the this for a function invoca
 That's it, you're now master over the this keyword.
 
 ## Arrow 
+
+
+
+
+
+
+
+
+
+
+### Nested Arrow function
+
+Arrow function doesnt have this binding. it take the value from enclose lexical context
+Arrow functions create closures over the this value of the enclosing execution context.
+
+```js
+let point3 = {
+    a:10,
+    init: ()=>{
+        console.log(this); // {}
+    }
+}
+point3.init();
+```
+
+
+
+
+
+
+
+
+```js
+globalThis.value = { result: "Sad face" };
+
+function one() {
+    function two() {
+        var three = {
+            value: { result: "Hmmm" },
+
+            fn: () => {
+                const four = () => this.value;
+                return four.call({
+                    value: { result: "OK", },
+                });
+            },
+        };
+        return three.fn();
+    };
+    return two();
+}
+
+new one();          // ???
+```
+The call-stack for that new one() invocation is:
+```js
+four         |
+three.fn     |
+two          | (this = globalThis)
+one          | (this = {})
+[ global ]   | (this = globalThis)
+```
+Since four() and fn() are both => arrow functions, the three.fn() and four.call(..) call-sites are not this-assigning; thus, they're irrelevant for our query. What's the next invocation to consider in the call-stack? two(). That's a regular function (it can accept this-assignment), and the call-site matches the default context assignment rule (#4). Since we're not in strict-mode, this is assigned globalThis.
+
+When four() is running, this is just a normal variable. It looks then to its containing function (three.fn()), but it again finds a function with no this. So it goes up another level, and finds a two() regular function that has a this defined. And that this is globalThis. So the this.value expression resolves to globalThis.value, which returns us... { result: "Sad face" }.
+
+
+## DOM 
+
+
+## Class and Constructor
+```js
+class Point2d {
+    x = null
+    getDoubleX = () => this.x * 2
+
+    constructor(x,y) {
+        this.x = x;
+        this.y = y;
+    }
+    toString() { /* .. */ }
+}
+
+var point = new Point2d(3,4);
+
+const getX = point.getDoubleX;
+
+console.log(getX()); // 6
+```
+
+
+## Use-case
+when we have to use this-keyword
+1.You typically use the "this" keyword in JavaScript when you want to refer to the current object within a method or a constructor function. Here are some common scenarios where you would use "this":
+
+1. Inside Object Methods: When you define methods for objects, you often use "this" to refer to properties or methods of the object itself. For example:
+```js
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  fullName: function() {
+    return this.firstName + " " + this.lastName;
+  }
+};
+console.log(person.fullName()); // Output: "John Doe"
+```
+2. Constructor Functions: When creating objects using constructor functions, "this" refers to the newly created instance of the object. It allows you to set properties on the newly created object. For example:
+```js
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.fullName = function() {
+    return this.firstName + " " + this.lastName;
+  };
+}
+
+const john = new Person("John", "Doe");
+console.log(john.fullName()); // Output: "John Doe"
+```
+
+3. Event Handlers: In event handlers, "this" typically refers to the element that triggered the event. For example:
+
+```js
+document.getElementById("myButton").addEventListener("click", function() {
+  console.log(this); // Output: the button element that triggered the event
+});
+
+```
+
+
+
+# 
+Reference:
+For Browser - how it behaves
+https://www.freecodecamp.org/news/the-this-keyword-in-javascript/
+
+Book: You Don't Know Js Yet
+https://github.com/Aasif-github/You-Dont-Know-JS/blob/2nd-ed/objects-classes/ch4.md
+
+VideoLink: https://www.youtube.com/watch?v=9T4z98JcHR0
+
