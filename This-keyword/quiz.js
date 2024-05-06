@@ -38,3 +38,23 @@ let ladder = {
   .showStep() // 1
   .down()
   .showStep(); // 0
+
+  // #2  
+  const shape = {
+    radius: 10,
+    diameter() {
+      return this.radius * 2;
+    },
+    perimeter: () => 2 * Math.PI * this.radius,
+  };
+  
+  console.log(shape.diameter()); // 20
+  console.log(shape.perimeter()); //NaN
+
+  /*
+Note that the value of diameter is a regular function, whereas the value of perimeter is an arrow function.
+
+With arrow functions, the this keyword refers to its current surrounding scope, unlike regular functions! This means that when we call perimeter, it doesn't refer to the shape object, but to its surrounding scope (window for example).
+
+Since there is no value radius in the scope of the arrow function, this.radius returns undefined which, when multiplied by 2 * Math.PI, results in NaN.
+  */
