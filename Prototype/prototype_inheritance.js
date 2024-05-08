@@ -62,3 +62,26 @@ console.log(obj2.__proto__.__proto__.__proto__);  // null becouse it has prototy
 // "asif" {} [[prototype]]:Object -->
 
 
+
+// animal has methods
+let animal = {
+    walk() {
+      if (!this.isSleeping) {
+        console.log(`I walk`);
+      }
+    },
+    sleep() {
+      this.isSleeping = true;
+    }
+  };
+  
+  let rabbit = {
+    name: "White Rabbit",
+    __proto__: animal
+  };
+  
+  // modifies rabbit.isSleeping
+  rabbit.sleep();
+  
+  console.log(rabbit.isSleeping); // true
+  console.log(animal.isSleeping); // undefined (no such property in the prototype)
