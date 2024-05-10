@@ -129,7 +129,8 @@ The default "prototype" is an object with the only property constructor that poi
   let obj3 = new obj_2.constructor('black box');
 
   
-// chapter 3- Native prototype
+// chapter 3- Native prototype #################################
+
 let obj_ = {};
 console.log(obj_.toString()); // [object Object]
 // So then when obj.toString() is called the method is taken from Object.prototype.
@@ -168,9 +169,9 @@ log('Primitive',String.prototype);
 
 
 
-Function.prototype.defer = function([...arg], ms){
-  setTimeout(this, ms)
-};
+// Function.prototype.defer = function([...arg], ms){
+//   setTimeout(this, ms)
+// };
 
 //
 // function f(){
@@ -183,4 +184,77 @@ function f(a, b) {
   alert( a + b );
 }
 
-f.defer(1000)(1, 2); // shows 3 after 1 second
+// f.defer(1000)(1, 2); // shows 3 after 1 second
+
+// chapter 4- Prototype methods, objects without __proto__ 
+// mordern methods to create prototype
+
+let wild_animal = {
+  eat: true
+}
+
+let panther = Object.create(wild_animal);
+log(panther.eat);  // true
+
+log(Object.getPrototypeOf(panther) === wild_animal);  // true
+
+Object.setPrototypeOf(panther, {});
+
+log(Object.getPrototypeOf(panther) === wild_animal);  // false
+
+
+// Object clone
+
+let obj4 = {
+  name:'asif',
+  address: {
+    house_no:234,
+    hometown: 'parks avenue',
+    street:{
+        nearBy:'new Angel high',
+        landmark:'any'
+    }
+  }
+}
+log(obj4);
+//shallow copy
+let copiedObject = { ...obj4 };
+copiedObject.name = 'Iqbal'
+log(copiedObject);
+
+// The Object.create provides an easy way to shallow-copy an object with all descriptors:
+let clone = Object.create(
+  Object.getPrototypeOf(obj4), Object.getOwnPropertyDescriptors(obj4)
+);
+
+log(clone)
+
+/*
+Task:
+There’s an object dictionary, created as Object.create(null), to store any key/value pairs.
+
+Add method dictionary.toString() into it, that should return a comma-delimited list of keys. Your toString should not show up in for..in over the object.
+*/
+
+let dictionary = Object.create(null);
+
+// your code to add dictionary.toString method
+
+// Object.setPrototypeOf(dictionary, {});
+
+Object.prototype.toString = function(params){
+  params.join("\"");
+}
+
+
+// add some data
+dictionary.apple = "Apple";
+dictionary.__proto__ = "test"; // __proto__ is a regular property key here
+
+// only apple and __proto__ are in the loop
+for(let key in dictionary) {
+  log(key); // "apple", then "__proto__"
+}
+
+// your toString in action
+log(dictionary.toString()); // "apple,__proto__"
