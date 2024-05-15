@@ -1,0 +1,1 @@
+[Generator - js.info](https://javascript.info/generators)

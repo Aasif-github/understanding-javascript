@@ -38,7 +38,8 @@ Interpreter [program]:
 
 
 # How JIT(Just-in-Time) Works Internally
-https://medium.com/@minhaz217/lets-understand-the-javascript-just-in-time-compiler-jit-and-how-the-v8-engine-works-ff6276d131a1
+[Understand JIT - compiler and how crome v8 Engine works](https://medium.com/@minhaz217/lets-understand-the-javascript-just-in-time-compiler-jit-and-how-the-v8-engine-works-ff6276d131a1)
+
 
 
 
@@ -56,11 +57,13 @@ https://www.freecodecamp.org/news/what-is-hoisting-in-javascript/
 
 
 ## is hosting is really important
+[Why-does-JavaScript-hoist-variables](https://www.quora.com/Why-does-JavaScript-hoist-variables)
 
-https://www.quora.com/Why-does-JavaScript-hoist-variables
 
-Temporal Dead Zone (TDZ)
-https://2ality.com/2015/10/why-tdz.html
+## Temporal Dead Zone (TDZ)
+
+[Why TDZ](https://2ality.com/2015/10/why-tdz.html)
+
 
 
 
