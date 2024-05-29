@@ -135,5 +135,201 @@ child.send({ hello: 'world' });
 
 In summary, spawning child processes in Node.js or any other environment allows an application to perform concurrent and parallel processing, improving performance, scalability, and fault tolerance.
 
+# What is CORS.
 
-Nodejs
+Cross-Origin Resource Sharing (CORS) is a security feature implemented by web browsers to prevent web pages from making requests to a different domain than the one that served the web page. This is crucial for maintaining security but can also restrict legitimate interactions between different services and APIs.
+
+In Node.js, you can manage CORS policies using middleware. The `cors` package is a popular solution to handle CORS in Express.js applications.
+
+### Setting Up CORS in a Node.js Application
+
+1. **Install the `cors` package**:
+
+   ```bash
+   npm install cors
+   ```
+
+2. **Configure CORS in your Express application**:
+
+   ```javascript
+   const express = require('express');
+   const cors = require('cors');
+
+   const app = express();
+
+   // Enable All CORS Requests
+   app.use(cors());
+
+   // Define your routes
+   app.get('/api/data', (req, res) => {
+     res.json({ message: 'This is a CORS-enabled response.' });
+   });
+
+   // Start the server
+   app.listen(3000, () => {
+     console.log('Server is running on port 3000');
+   });
+   ```
+
+### Customizing CORS Configuration
+
+You can customize the CORS settings to allow only specific origins, methods, and headers. Here are some common configuration options:
+
+1. **Allow Specific Origins**:
+
+   ```javascript
+   const corsOptions = {
+     origin: 'http://example.com', // Replace with your allowed origin
+   };
+
+   app.use(cors(corsOptions));
+   ```
+
+2. **Allow Multiple Origins**:
+
+   ```javascript
+   const whitelist = ['http://example1.com', 'http://example2.com'];
+   const corsOptions = {
+     origin: function (origin, callback) {
+       if (whitelist.indexOf(origin) !== -1 || !origin) {
+         callback(null, true);
+       } else {
+         callback(new Error('Not allowed by CORS'));
+       }
+     }
+   };
+
+   app.use(cors(corsOptions));
+   ```
+
+3. **Allow Specific Methods and Headers**:
+
+   ```javascript
+   const corsOptions = {
+     origin: 'http://example.com',
+     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+     allowedHeaders: ['Content-Type', 'Authorization']
+   };
+
+   app.use(cors(corsOptions));
+   ```
+
+4. **Allow Credentials**:
+
+   If your API needs to accept cookies or other credentials, set the `credentials` option to `true`.
+
+   ```javascript
+   const corsOptions = {
+     origin: 'http://example.com',
+     credentials: true
+   };
+
+   app.use(cors(corsOptions));
+   ```
+
+### Example with Multiple Options
+
+Here’s an example with various CORS options configured:
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    const whitelist = ['http://example1.com', 'http://example2.com'];
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
+app.get('/api/data', (req, res) => {
+  res.json({ message: 'This is a CORS-enabled response.' });
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+```
+
+### Handling CORS Errors
+
+If a CORS request fails, the browser typically logs a CORS error in the console. It's essential to properly handle these errors in your server configuration and provide informative responses to the client if a request is blocked by CORS policy.
+
+### Conclusion
+
+CORS is an important mechanism for securing web applications and controlling access to resources from different origins. By configuring CORS correctly in your Node.js application, you can protect your API while enabling legitimate cross-origin requests. The `cors` package makes it straightforward to set up and customize CORS settings to meet your application's needs.
+
+
+## What is Streams in Node.js
+
+Streams in Node.js are objects that allow for reading or writing data in a continuous, efficient manner. They are especially useful for handling large amounts of data, as they process data piece by piece, without needing to load everything into memory at once. Streams can be used to work with files, network communications, or any kind of continuous data flow.
+
+There are four types of streams in Node.js:
+
+1. **Readable Streams**: Used for reading data. Examples include `fs.createReadStream` to read from a file, `http.IncomingMessage` for HTTP requests, and `process.stdin` for standard input.
+   
+2. **Writable Streams**: Used for writing data. Examples include `fs.createWriteStream` to write to a file, `http.ServerResponse` for HTTP responses, and `process.stdout` for standard output.
+
+3. **Duplex Streams**: Implement both readable and writable interfaces. They can be used for scenarios where data can be read and written, such as TCP sockets.
+
+4. **Transform Streams**: A type of duplex stream where the output is computed based on the input. They are often used for data modification or computation during the streaming process. Examples include `zlib.createGzip` for compressing data and `zlib.createGunzip` for decompressing data.
+
+### Key Methods and Events in Streams
+
+- **Readable Streams**:
+  - `readable.on('data', chunk)`: Listens for data to be available for reading.
+  - `readable.on('end')`: Emitted when no more data is available to be read.
+  - `readable.pipe(destination)`: Pipes the data from the readable stream to a writable stream.
+
+- **Writable Streams**:
+  - `writable.write(chunk)`: Writes data to the stream.
+  - `writable.end()`: Signals that no more data will be written to the stream.
+
+- **Duplex Streams**:
+  - Inherits methods from both readable and writable streams.
+
+- **Transform Streams**:
+  - Inherits methods from both readable and writable streams.
+  - Implements a `_transform(chunk, encoding, callback)` method where the chunk is transformed and passed to the callback.
+
+### Example of Using Streams
+
+Here’s a basic example of how to use readable and writable streams to copy the contents of one file to another:
+
+```javascript
+const fs = require('fs');
+
+// Create a readable stream from the source file
+const readableStream = fs.createReadStream('source.txt');
+
+// Create a writable stream to the destination file
+const writableStream = fs.createWriteStream('destination.txt');
+
+// Pipe the data from the readable stream to the writable stream
+readableStream.pipe(writableStream);
+
+readableStream.on('end', () => {
+  console.log('File copy completed.');
+});
+
+readableStream.on('error', (err) => {
+  console.error('An error occurred:', err.message);
+});
+
+writableStream.on('error', (err) => {
+  console.error('An error occurred:', err.message);
+});
+```
+
+In this example, `fs.createReadStream` and `fs.createWriteStream` are used to create readable and writable streams, respectively. The `pipe` method is then used to transfer data from the readable stream to the writable stream, efficiently copying the file content.
